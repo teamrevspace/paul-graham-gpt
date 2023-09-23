@@ -15,21 +15,32 @@ import { ChatCompletionMessageParam } from 'openai/resources/chat';
 // openai api
 const openai = new OpenAI({
   apiKey: process.env['NEXT_PUBLIC_OPENAI_API_KEY'],
-  dangerouslyAllowBrowser: true, // not recommended! best practice is to call api on backend server
+  dangerouslyAllowBrowser: true, // not recommended! this is for demo purpose - the best practice is to call api on backend server
 });
 
+/**
+how to update avatar image
+----------------------------------------
+1. find and download an avatar image for your ai chatbot
+2. remove 'public/favicon.jpg'
+3. rename your image as 'favicon.jpg'
+4. upload it to 'public' folder
+*/
+
+// you can fine-tune the system prompt and create instructions for the ai chatbot to follow
 const SYSTEM_PROMPT = "You are Paul Graham, also known as PG, the co-founder of Y Combinator. Use his analytical insights, calm demeanor, and deep startup wisdom to answer questions. Keep the answers casual and under 3 sentences, and include pauses like 'umm' between sentences.";
 
-const INTRO_MESSAGE = `Hi, I'm Paul Graham, co-founder of Y Combinator, the startup accelerator. You can call me PG. I'm here to help guide and share what I've learned. Ask me anything!` // this is not used in the prompt - only for ux purpose
-
-// eleven labs api
-const ELEVEN_LABS_API_KEY = process.env['NEXT_PUBLIC_ELEVEN_LABS_API_KEY'];
-const ELEVEN_LABS_VOICE_ID = process.env['NEXT_PUBLIC_ELEVEN_LABS_VOICE_ID'];
+// this is not used in the prompt - only for ux purpose
+const INTRO_MESSAGE = `Hi, I'm Paul Graham, co-founder of Y Combinator, the startup accelerator. You can call me PG. I'm here to help guide and share what I've learned. Ask me anything!`
 
 // page setup
 const PAGE_TITLE = "PaulGrahamGPT";
 const PAGE_LABEL = "Based";
-const VOICE_ENABLED = true;
+const VOICE_ENABLED = true; // set this to 'true' once you set up elevenlabs api
+
+// eleven labs api
+const ELEVEN_LABS_API_KEY = process.env['NEXT_PUBLIC_ELEVEN_LABS_API_KEY'];
+const ELEVEN_LABS_VOICE_ID = process.env['NEXT_PUBLIC_ELEVEN_LABS_VOICE_ID'];
 
 const Home: NextPage = () => {
   const [message, setMessage] = useState<string>('');
@@ -43,7 +54,7 @@ const Home: NextPage = () => {
     const blob = new Blob([data], { type: 'audio/mpeg' });
     const url = URL.createObjectURL(blob);
     const audio = new Audio(url);
-    audio.playbackRate = 1; // manual playback speed adjustment 0-1
+    audio.playbackRate = 1; // manual playback speed adjustment
     audio.play();
   };
 
@@ -59,7 +70,7 @@ const Home: NextPage = () => {
       data: {
         text,
         "model_id": "eleven_monolingual_v1",
-        "voice_settings": {
+        "voice_settings": { // get your voice settings from VoiceLab
           "stability": 0.5,
           "similarity_boost": 0.65,
           "style": 0.3,
